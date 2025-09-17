@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Surat Keterangan Lulus</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    #surat {
+      width: 800px;
+      padding: 20px;
+      border: 1px solid #000;
+      font-family: Arial;
+      background: white;
+      margin: 0 auto;
+    }
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="surat">
+  <h2 style="text-align:center;">SURAT KETERANGAN LULUS</h2>
+  <p>Nama: <span id="nama">[Nama]</span></p>
+  <p>NISN: <span id="nisn">[NISN]</span></p>
+  <p>Tempat, Tanggal Lahir: <span id="ttl">[TTL]</span></p>
+  <p>Nilai: <span id="nilai">[Nilai]</span></p>
+  <p>Status: <strong><span id="status">LULUS</span></strong></p>
+</div>
+
+<div style="text-align:center;">
+  <button onclick="downloadSurat()">Download Surat (JPG)</button>
+</div>
+
+<script>
+  // Simulasi ambil data siswa dari URL (nanti bisa fetch dari API atau Google Sheets)
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  // Simulasi data siswa
+  const siswa = {
+    "12345": {
+      nama: "Andi Saputra",
+      nisn: "1234567890",
+      ttl: "Bandung, 15 Agustus 2007",
+      nilai: "85.5",
+      status: "LULUS"
+    }
+    // Tambah data siswa lainnya
+  };
+
+  // Tampilkan datanya di surat
+  const data = siswa[id];
+  if (data) {
+    document.getElementById("nama").innerText = data.nama;
+    document.getElementById("nisn").innerText = data.nisn;
+    document.getElementById("ttl").innerText = data.ttl;
+    document.getElementById("nilai").innerText = data.nilai;
+    document.getElementById("status").innerText = data.status;
+  } else {
+    document.getElementById("surat").innerHTML = "<h3>ID tidak ditemukan</h3>";
+  }
+
+  function downloadSurat() {
+    const node = document.getElementById('surat');
+    html2canvas(node).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `Surat_Lulus_${data.nama.replace(" ", "_")}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg');
+      link.click();
+    });
+  }
+</script>
+
+</body>
+</html>
