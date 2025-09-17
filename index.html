@@ -12,15 +12,35 @@
       text-align: center;
     }
 
-    #surat {
-      width: 800px;
-      margin: 20px auto;
-      padding: 30px;
+    #container {
+      width: 900px;
+      margin: 0 auto;
+      display: flex;
       background-color: #fff;
       border: 2px solid #ccc;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none; /* Sembunyikan sampai data tampil */
+    }
+
+    #logo {
+      width: 35%;
+      background-color: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border-right: 2px solid #ccc;
+    }
+
+    #logo img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    #surat {
+      width: 65%;
+      padding: 30px;
       text-align: left;
-      display: none; /* Tersembunyi sampai data muncul */
     }
 
     #downloadBtn {
@@ -28,7 +48,7 @@
       padding: 10px 20px;
       font-size: 16px;
       cursor: pointer;
-      display: none; /* Tersembunyi sampai data muncul */
+      display: none;
     }
 
     #loading {
@@ -65,13 +85,21 @@
   <p>Memuat data siswa...</p>
 </div>
 
-<!-- Surat tampil setelah data berhasil -->
-<div id="surat">
-  <p><strong>Nama:</strong> <span id="nama">...</span></p>
-  <p><strong>NISN:</strong> <span id="nisn">...</span></p>
-  <p><strong>Tempat, Tanggal Lahir:</strong> <span id="ttl">...</span></p>
-  <p><strong>Nilai:</strong> <span id="nilai">...</span></p>
-  <p><strong>Status Kelulusan:</strong> <span id="status">...</span></p>
+<!-- Kontainer 2 kolom -->
+<div id="container">
+  <!-- Kolom kiri (Logo) -->
+  <div id="logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Tut_Wuri_Handayani.svg/800px-Tut_Wuri_Handayani.svg.png" alt="Logo Sekolah">
+  </div>
+
+  <!-- Kolom kanan (Isi Surat) -->
+  <div id="surat">
+    <p><strong>Nama:</strong> <span id="nama">...</span></p>
+    <p><strong>NISN:</strong> <span id="nisn">...</span></p>
+    <p><strong>Tempat, Tanggal Lahir:</strong> <span id="ttl">...</span></p>
+    <p><strong>Nilai:</strong> <span id="nilai">...</span></p>
+    <p><strong>Status Kelulusan:</strong> <span id="status">...</span></p>
+  </div>
 </div>
 
 <!-- Tombol Download -->
@@ -85,7 +113,7 @@
     if (!id) {
       document.getElementById("loading").style.display = "none";
       document.getElementById("surat").innerHTML = "<h3>ID tidak ditemukan di URL.</h3>";
-      document.getElementById("surat").style.display = "block";
+      document.getElementById("container").style.display = "flex";
       return;
     }
 
@@ -99,31 +127,30 @@
 
       if (data.error) {
         document.getElementById("surat").innerHTML = `<h3>${data.error}</h3>`;
-        document.getElementById("surat").style.display = "block";
+        document.getElementById("container").style.display = "flex";
         return;
       }
 
-      // Tampilkan data
+      // Isi data
       document.getElementById("nama").textContent = data.nama;
       document.getElementById("nisn").textContent = data.nisn;
       document.getElementById("ttl").textContent = data.ttl;
       document.getElementById("nilai").textContent = data.nilai;
       document.getElementById("status").textContent = data.status;
 
-      document.getElementById("surat").style.display = "block";
+      document.getElementById("container").style.display = "flex";
       document.getElementById("downloadBtn").style.display = "inline-block";
 
     } catch (err) {
       document.getElementById("loading").style.display = "none";
       document.getElementById("surat").innerHTML = "<h3>Gagal mengambil data siswa.</h3>";
-      document.getElementById("surat").style.display = "block";
+      document.getElementById("container").style.display = "flex";
     }
   };
 
-  // Tombol download JPG
+  // Tombol Download JPG
   document.getElementById("downloadBtn").addEventListener("click", function () {
-    const element = document.getElementById("surat");
-    html2canvas(element).then(canvas => {
+    html2canvas(document.getElementById("container")).then(canvas => {
       const link = document.createElement('a');
       link.download = 'Surat_Keterangan_Lulus.jpg';
       link.href = canvas.toDataURL('image/jpeg');
