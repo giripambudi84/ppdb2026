@@ -1,51 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>Surat Keterangan Lulus</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>
-  window.onload = async function () {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("id");
-
-    if (!id) {
-      document.body.innerHTML = "<h2>ID tidak ditemukan di URL</h2>";
-      return;
-    }
-
-    const apiUrl = "https://script.google.com/macros/s/AKfycbxyz1234567890/exec?id=" + id;
-
-    try {
-      const response = await fetch(apiUrl);
-      const data = await response.json();
-
-      if (data.error) {
-        document.body.innerHTML = "<h2>" + data.error + "</h2>";
-        return;
-      }
-
-      document.getElementById("nama").textContent = data.nama;
-      document.getElementById("nisn").textContent = data.nisn;
-      document.getElementById("ttl").textContent = data.ttl;
-      document.getElementById("nilai").textContent = data.nilai;
-      document.getElementById("status").textContent = data.status;
-    } catch (err) {
-      document.body.innerHTML = "<h2>Error mengambil data siswa</h2>";
-    }
-  };
-</script>
-
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+      text-align: center;
+    }
+
     #surat {
       width: 800px;
-      padding: 20px;
-      border: 1px solid #000;
-      font-family: Arial;
-      background: white;
       margin: 0 auto;
+      padding: 30px;
+      background-color: white;
+      border: 1px solid #ccc;
+      text-align: left;
     }
-    button {
-      margin-top: 30px;
+
+    #downloadBtn {
+      margin-top: 20px;
       padding: 10px 20px;
       font-size: 16px;
     }
@@ -53,57 +30,61 @@
 </head>
 <body>
 
+<h2>Surat Keterangan Lulus</h2>
+
 <div id="surat">
-  <h2 style="text-align:center;">SURAT KETERANGAN LULUS</h2>
-  <p>Nama: <span id="nama">[Nama]</span></p>
-  <p>NISN: <span id="nisn">[NISN]</span></p>
-  <p>Tempat, Tanggal Lahir: <span id="ttl">[TTL]</span></p>
-  <p>Nilai: <span id="nilai">[Nilai]</span></p>
-  <p>Status: <strong><span id="status">LULUS</span></strong></p>
+  <p><strong>Nama:</strong> <span id="nama">...</span></p>
+  <p><strong>NISN:</strong> <span id="nisn">...</span></p>
+  <p><strong>TTL:</strong> <span id="ttl">...</span></p>
+  <p><strong>Nilai:</strong> <span id="nilai">...</span></p>
+  <p><strong>Status:</strong> <span id="status">...</span></p>
 </div>
 
-<div style="text-align:center;">
-  <button onclick="downloadSurat()">Download Surat (JPG)</button>
-</div>
+<button id="downloadBtn">Download Surat (JPG)</button>
 
 <script>
-  // Simulasi ambil data siswa dari URL (nanti bisa fetch dari API atau Google Sheets)
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
+  window.onload = async function () {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
 
-  // Simulasi data siswa
-  const siswa = {
-    "12345": {
-      nama: "Andi Saputra",
-      nisn: "1234567890",
-      ttl: "Bandung, 15 Agustus 2007",
-      nilai: "85.5",
-      status: "LULUS"
+    if (!id) {
+      document.getElementById("surat").innerHTML = "<h3>ID tidak ditemukan di URL.</h3>";
+      return;
     }
-    // Tambah data siswa lainnya
+
+    const apiUrl = `https://script.google.com/macros/s/AKfycbyVnvG8y7d_lmI1JkO1YDQH2nThLDtirn_NisZVcL-POOGLHbH0S51TDwS7qUt606rI/exec?id=${id}`;
+
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      if (data.error) {
+        document.getElementById("surat").innerHTML = `<h3>${data.error}</h3>`;
+        return;
+      }
+
+      // Isi data siswa
+      document.getElementById("nama").textContent = data.nama;
+      document.getElementById("nisn").textContent = data.nisn;
+      document.getElementById("ttl").textContent = data.ttl;
+      document.getElementById("nilai").textContent = data.nilai;
+      document.getElementById("status").textContent = data.status;
+
+    } catch (err) {
+      document.getElementById("surat").innerHTML = "<h3>Gagal mengambil data. Silakan coba lagi.</h3>";
+    }
   };
 
-  // Tampilkan datanya di surat
-  const data = siswa[id];
-  if (data) {
-    document.getElementById("nama").innerText = data.nama;
-    document.getElementById("nisn").innerText = data.nisn;
-    document.getElementById("ttl").innerText = data.ttl;
-    document.getElementById("nilai").innerText = data.nilai;
-    document.getElementById("status").innerText = data.status;
-  } else {
-    document.getElementById("surat").innerHTML = "<h3>ID tidak ditemukan</h3>";
-  }
-
-  function downloadSurat() {
-    const node = document.getElementById('surat');
-    html2canvas(node).then(canvas => {
+  // Fungsi download sebagai JPG
+  document.getElementById("downloadBtn").addEventListener("click", function () {
+    const element = document.getElementById("surat");
+    html2canvas(element).then(canvas => {
       const link = document.createElement('a');
-      link.download = `Surat_Lulus_${data.nama.replace(" ", "_")}.jpg`;
+      link.download = 'Surat_Keterangan_Lulus.jpg';
       link.href = canvas.toDataURL('image/jpeg');
       link.click();
     });
-  }
+  });
 </script>
 
 </body>
